@@ -7,11 +7,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Dependency struct {
-	Name      string
-	Reference string
-}
-
 // ParseVersion retrieves a reference out of a version.
 //
 func ParseVersion(ver string) (ref string, err error) {
@@ -57,6 +52,20 @@ func tryVersionDateSha(ver string) (ref string, ok bool) {
 	return
 }
 
+// Line represents the contents of a line without
+// any parsing applied to the fields beside filtering out
+// unwanted content.
+//
+type Line struct {
+	Dependency string
+	Version    string
+}
+
+func ParseLine(content string) (line Line, err error) {
+	// TODO
+	return
+}
+
 // Parse parses a go.mod dependency line.
 //
 //
@@ -71,6 +80,6 @@ func tryVersionDateSha(ver string) (ref string, ok bool) {
 //        dependency name (where to ask for go source code)
 //
 //
-func Parse() (dep Dependency, err error) {
-	return
-}
+// func Parse() (dep Dependency, err error) {
+// 	return
+// }
