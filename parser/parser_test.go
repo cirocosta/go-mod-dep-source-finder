@@ -38,12 +38,21 @@ var _ = Describe("ParseLine", func() {
 		}),
 
 		Entry("without a semver after first field", testCase{
-			line:       "aaa bbb",
-			parsedLine: parser.Line{"aaa", "bbb"},
+			line:        "aaa bbb",
+			shouldError: true,
 		}),
-		Entry("having leading white spaces", testCase{
-			line: "   	aaa bbb",
-			parsedLine: parser.Line{"aaa", "bbb"},
+		Entry("having a proper semver after the dependency", testCase{
+			line:       "aaa v1.2.3",
+			parsedLine: parser.Line{"aaa", "v1.2.3"},
+		}),
+
+		Entry("having leading spaces", testCase{
+			line:       "   aaa v1.2.3",
+			parsedLine: parser.Line{"aaa", "v1.2.3"},
+		}),
+		Entry("having trailing fields", testCase{
+			line:       "   aaa v1.2.3 // indirect",
+			parsedLine: parser.Line{"aaa", "v1.2.3"},
 		}),
 	)
 })

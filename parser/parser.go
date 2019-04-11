@@ -58,12 +58,12 @@ func tryVersionDateSha(ver string) (ref string, ok bool) {
 //
 type Line struct {
 	Dependency string
-	Version    string
+	Reference  string
 }
 
 // ParseLine parses a single dependency line, returning the struct
-// that represents its contents without any interpretation of its
-// fields.
+// that represents its contents, with the version already interpreted
+// as a reference.
 //
 func ParseLine(content string) (line Line, err error) {
 	if content == "" {
@@ -79,7 +79,13 @@ func ParseLine(content string) (line Line, err error) {
 
 	line = Line{
 		Dependency: fields[0],
-		Version:    fields[1],
+	}
+
+	line.Reference, err = ParseVersion(fields[1])
+	if err != nil {
+		err = errors.Wrapf(err,
+			"failed to parse version in line")
+		return
 	}
 
 	return
