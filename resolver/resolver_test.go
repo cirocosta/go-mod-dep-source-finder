@@ -1,6 +1,7 @@
 package resolver_test
 
 import (
+	"bytes"
 	"context"
 
 	"github.com/cirocosta/go-mod-license-finder/parser"
@@ -10,6 +11,47 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
+
+var _ = Describe("FindGoImport", func() {
+
+	var (
+		content string
+		// importLine string
+		// found bool
+		err error
+	)
+
+	JustBeforeEach(func() {
+		_, _, err = resolver.FindGoImport(bytes.NewBufferString(content))
+	})
+
+	Context("not having a proper html", func() {
+
+		BeforeEach(func() {
+			content = ``
+		})
+
+		It("errors", func() {
+			Expect(err).To(HaveOccurred())
+		})
+
+	})
+
+	// Context("having a proper html", func() {
+
+	// 	Context("not having any go-import in the html", func() {
+	// 		It("doesn't find", func() {
+
+	// 		})
+	// 	})
+
+	// 	Context("having a go-import without content", func() {
+	// 		It("doesn't find", func() {
+
+	// 		})
+	// 	})
+	// })
+})
 
 var _ = Describe("Resolver", func() {
 
