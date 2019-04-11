@@ -1,15 +1,38 @@
 package main
 
 import (
-	"flag"
+	"bufio"
+	"bytes"
 	"fmt"
+	"io"
+	"os"
 )
 
-var (
-	goModFilepath = flag.String("file", "./go.mod", "location of the go.mod file")
-)
+func failWithHelp(messageFormat string, args ...interface{}) {
+	const usageFormat = `Usage: %s <line>\n`
+
+	fmt.Fprintf(os.Stderr, messageFormat, args...)
+	fmt.Fprintf(os.Stderr, usageFormat, os.Args[0])
+
+	os.Exit(1)
+}
 
 func main() {
-	flag.Parse()
-	fmt.Println("vim-go")
+	if len(os.Args) < 2 {
+		failWithHelp("error: not enough arguments.\n")
+	}
+
+	var reader io.Reader
+
+	line := os.Args[1]
+	if line == "-" {
+		reader = os.Stdin
+	} else {
+		reader = bytes.NewBufferString(line)
+	}
+
+	scanner := bufio.NewScanner(reader)
+	for scanner.Scan() {
+		fmt.Printf("line: %s\n", scanner.Text())
+	}
 }
