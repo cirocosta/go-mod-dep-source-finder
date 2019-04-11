@@ -7,6 +7,15 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Line represents the contents of a line without
+// any parsing applied to the fields beside filtering out
+// unwanted content.
+//
+type Line struct {
+	Dependency string
+	Reference  string
+}
+
 // ParseVersion retrieves a reference out of a version.
 //
 func ParseVersion(ver string) (ref string, err error) {
@@ -50,15 +59,6 @@ func tryVersionDateSha(ver string) (ref string, ok bool) {
 	ref = components[2]
 
 	return
-}
-
-// Line represents the contents of a line without
-// any parsing applied to the fields beside filtering out
-// unwanted content.
-//
-type Line struct {
-	Dependency string
-	Reference  string
 }
 
 // ParseLine parses a single dependency line, returning the struct
