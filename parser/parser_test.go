@@ -8,6 +8,46 @@ import (
 	"github.com/cirocosta/go-mod-license-finder/parser"
 )
 
+var _ = Describe("ParseLine", func() {
+
+	type testCase struct {
+		line        string
+		parsedLine  parser.Line
+		shouldError bool
+	}
+
+	DescribeTable("varying possible lines",
+		func(tc testCase) {
+			line, err := parser.ParseLine(tc.line)
+
+			if tc.shouldError {
+				Expect(err).To(HaveOccurred())
+				return
+			}
+
+			Expect(line).To(Equal(tc.parsedLine))
+
+		},
+		Entry("empty", testCase{
+			line:        "",
+			shouldError: true,
+		}),
+		Entry("without enough fields", testCase{
+			line:        "aaaaa",
+			shouldError: true,
+		}),
+
+		Entry("without a semver after first field", testCase{
+			line:       "aaa bbb",
+			parsedLine: parser.Line{"aaa", "bbb"},
+		}),
+		Entry("having leading white spaces", testCase{
+			line: "   	aaa bbb",
+			parsedLine: parser.Line{"aaa", "bbb"},
+		}),
+	)
+})
+
 var _ = Describe("ParseVersion", func() {
 
 	type testCase struct {

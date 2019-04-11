@@ -61,8 +61,27 @@ type Line struct {
 	Version    string
 }
 
+// ParseLine parses a single dependency line, returning the struct
+// that represents its contents without any interpretation of its
+// fields.
+//
 func ParseLine(content string) (line Line, err error) {
-	// TODO
+	if content == "" {
+		err = errors.Errorf("line must not be empty")
+		return
+	}
+
+	fields := strings.Fields(content)
+	if len(fields) < 2 {
+		err = errors.Errorf("not enough fields")
+		return
+	}
+
+	line = Line{
+		Dependency: fields[0],
+		Version:    fields[1],
+	}
+
 	return
 }
 
