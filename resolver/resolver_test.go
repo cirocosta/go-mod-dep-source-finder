@@ -15,42 +15,55 @@ import (
 var _ = Describe("FindGoImport", func() {
 
 	var (
-		content string
-		// importLine string
-		// found bool
-		err error
+		content    string
+		importLine string
+		found      bool
+		err        error
 	)
 
 	JustBeforeEach(func() {
-		_, _, err = resolver.FindGoImport(bytes.NewBufferString(content))
+		importLine, found, err = resolver.FindGoImport(bytes.NewBufferString(content))
 	})
 
-	Context("not having a proper html", func() {
+	Context("providing invalid html", func() {
 
 		BeforeEach(func() {
-			content = ``
+			content = `<html><body thiiiis>>`
 		})
 
-		It("errors", func() {
-			Expect(err).To(HaveOccurred())
+		It("doesn't error", func() {
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("doesn't find anything", func() {
+			Expect(found).ToNot(BeTrue())
 		})
 
 	})
 
-	// Context("having a proper html", func() {
+	Context("having a proper html", func() {
 
-	// 	Context("not having any go-import in the html", func() {
-	// 		It("doesn't find", func() {
+		Context("not having any go-import in the html", func() {
+			BeforeEach(func() {
+				content = `<html><body></body></html>`
+			})
 
-	// 		})
-	// 	})
+			It("doesn't find", func() {
+				Expect(found).ToNot(BeTrue())
+			})
+		})
 
-	// 	Context("having a go-import without content", func() {
-	// 		It("doesn't find", func() {
+		Context("having a go-import without content", func() {
+			BeforeEach(func() {
+				content = `<html><meta name="go-import" content=""></html>`
+			})
 
-	// 		})
-	// 	})
-	// })
+			It("finds returning empty", func() {
+				Expect(found).To(BeTrue())
+				Expect(importLine).To(BeEmpty())
+			})
+		})
+	})
 })
 
 var _ = Describe("Resolver", func() {

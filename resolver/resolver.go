@@ -60,6 +60,9 @@ func FindGoImport(reader io.Reader) (importLine string, found bool, err error) {
 	return
 }
 
+//
+// Ref: https://golang.org/cmd/go/#hdr-Download_and_install_packages_and_dependencies
+//
 func Resolve(ctx context.Context, dependency parser.Line) (loc Location, err error) {
 	var resp *http.Response
 
