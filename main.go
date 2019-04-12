@@ -42,7 +42,8 @@ func execute(text string) {
 
 	log.Printf("%+v\n", location)
 
-	// [cc]: perform clone
+	// [cc]: perform clone .. etc
+	// 	what could be a good name for such component?
 }
 
 func main() {

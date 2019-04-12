@@ -3,6 +3,7 @@ package resolver_test
 import (
 	"bytes"
 	"context"
+	"net/http"
 
 	"github.com/cirocosta/go-mod-license-finder/resolver"
 	"github.com/onsi/gomega/ghttp"
@@ -107,8 +108,11 @@ var _ = Describe("FindGoImport", func() {
 var _ = Describe("Resolve", func() {
 
 	var (
-		server     *ghttp.Server
-		dependency string
+		server         *ghttp.Server
+		dependency     string
+		err            error
+		location       resolver.Location
+		serverHandlers = []http.HandlerFunc{}
 	)
 
 	BeforeEach(func() {
@@ -120,21 +124,49 @@ var _ = Describe("Resolve", func() {
 	})
 
 	JustBeforeEach(func() {
-		_, _ = resolver.Resolve(context.TODO(), dependency)
+		server.AppendHandlers(ghttp.CombineHandlers(serverHandlers...))
+		location, err = resolver.Resolve(context.TODO(), dependency)
 	})
 
 	Context("having a proper dependency as input", func() {
 
 		BeforeEach(func() {
 			dependency = server.URL()
-
-			server.AppendHandlers(ghttp.CombineHandlers(
+			serverHandlers = append(serverHandlers,
 				ghttp.VerifyRequest("GET", "/"),
-			))
+			)
 		})
 
 		It("issues request to the domain", func() {
 			Expect(server.ReceivedRequests()).To(HaveLen(1))
+		})
+
+		Context("serving content with go-import properly set", func() {
+
+			const content = `<html>
+				<head>
+					<meta 	name="go-import" 
+						content="gopkg.in/yaml.v2 git https://gopkg.in/yaml.v2"
+					>
+				</head>
+			</html>`
+
+			BeforeEach(func() {
+				serverHandlers = append(serverHandlers,
+					ghttp.RespondWith(200, content),
+				)
+			})
+
+			It("doesn't fail", func() {
+				Expect(err).ToNot(HaveOccurred())
+			})
+
+			It("gets the location determined", func() {
+				Expect(location).To(Equal(resolver.Location{
+					VCS: "git",
+					URL: "https://gopkg.in/yaml.v2",
+				}))
+			})
 		})
 	})
 })
