@@ -77,10 +77,7 @@ func ParseLine(content string) (line Line, err error) {
 		return
 	}
 
-	line = Line{
-		Dependency: fields[0],
-	}
-
+	line.Dependency = fields[0]
 	line.Reference, err = ParseVersion(fields[1])
 	if err != nil {
 		err = errors.Wrapf(err,

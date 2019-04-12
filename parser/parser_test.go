@@ -1,11 +1,11 @@
 package parser_test
 
 import (
+	"github.com/cirocosta/go-mod-license-finder/parser"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
-
-	"github.com/cirocosta/go-mod-license-finder/parser"
 )
 
 var _ = Describe("ParseLine", func() {

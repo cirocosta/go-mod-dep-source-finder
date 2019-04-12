@@ -4,9 +4,9 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/cirocosta/go-mod-license-finder/parser"
 	"github.com/pkg/errors"
 )
 
@@ -15,6 +15,9 @@ type Location struct {
 	URL string
 }
 
+// doRequest performs an HTTP request against a URL with the necessary setup for
+// capturing pages with `go-import`s.
+//
 func doRequest(ctx context.Context, url string) (resp *http.Response, err error) {
 	var req *http.Request
 
@@ -42,6 +45,39 @@ func doRequest(ctx context.Context, url string) (resp *http.Response, err error)
 	return
 }
 
+type GoImport struct {
+	ImportPrefix string
+	VCS          string
+	RepoRoot     string
+}
+
+// ParseGoImport parses the value associated with the content tag of a `go-import`
+// header meta element.
+//
+func ParseGoImport(content string) (res GoImport, err error) {
+	if content == "" {
+		err = errors.Errorf("empty content")
+		return
+	}
+
+	fields := strings.Fields(content)
+	if len(fields) != 3 {
+		err = errors.Errorf("must have 3 fields")
+		return
+	}
+
+	res.ImportPrefix = fields[0]
+	res.VCS = fields[1]
+	res.RepoRoot = fields[2]
+
+	return
+}
+
+// FindGoImport searches for a `go-import` through the contents of a reader, capturing
+// the `go-import` content's if found.
+//
+// Ref: https://golang.org/cmd/go/#hdr-Download_and_install_packages_and_dependencies
+//
 func FindGoImport(reader io.Reader) (importLine string, found bool, err error) {
 	doc, err := goquery.NewDocumentFromReader(reader)
 	if err != nil {
@@ -60,13 +96,12 @@ func FindGoImport(reader io.Reader) (importLine string, found bool, err error) {
 	return
 }
 
+// Resolve retrieves a dependency's source code location from a dependency line.
 //
-// Ref: https://golang.org/cmd/go/#hdr-Download_and_install_packages_and_dependencies
-//
-func Resolve(ctx context.Context, dependency parser.Line) (loc Location, err error) {
+func Resolve(ctx context.Context, dependency string) (loc Location, err error) {
 	var resp *http.Response
 
-	resp, err = doRequest(ctx, dependency.Dependency)
+	resp, err = doRequest(ctx, dependency)
 	if err != nil {
 		err = errors.Wrapf(err, "failed to issue request for dependency - %+v", dependency)
 		return

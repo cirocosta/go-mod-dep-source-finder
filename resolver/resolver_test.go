@@ -4,13 +4,51 @@ import (
 	"bytes"
 	"context"
 
-	"github.com/cirocosta/go-mod-license-finder/parser"
 	"github.com/cirocosta/go-mod-license-finder/resolver"
 	"github.com/onsi/gomega/ghttp"
 
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 )
+
+var _ = Describe("ParseGoImportContent", func() {
+
+	type testCase struct {
+		content     string
+		goImport    resolver.GoImport
+		shouldError bool
+	}
+
+	DescribeTable("varying possible content",
+		func(tc testCase) {
+			res, err := resolver.ParseGoImport(tc.content)
+			if tc.shouldError {
+				Expect(err).To(HaveOccurred())
+				return
+			}
+
+			Expect(res).To(Equal(tc.goImport))
+		},
+		Entry("empty", testCase{
+			content:     "",
+			shouldError: true,
+		}),
+		Entry("without enough fields", testCase{
+			content:     "github.com/cirocosta/l4 git",
+			shouldError: true,
+		}),
+		Entry("with enough fields", testCase{
+			content: "github.com/cirocosta/l4 git https://github.com/cirocosta/l4.git",
+			goImport: resolver.GoImport{
+				ImportPrefix: "github.com/cirocosta/l4",
+				VCS:          "git",
+				RepoRoot:     "https://github.com/cirocosta/l4.git",
+			},
+		}),
+	)
+
+})
 
 var _ = Describe("FindGoImport", func() {
 
@@ -70,7 +108,7 @@ var _ = Describe("Resolver", func() {
 
 	var (
 		server     *ghttp.Server
-		dependency parser.Line
+		dependency string
 	)
 
 	BeforeEach(func() {
@@ -88,10 +126,7 @@ var _ = Describe("Resolver", func() {
 	Context("having a proper dependency as input", func() {
 
 		BeforeEach(func() {
-			dependency = parser.Line{
-				Dependency: server.URL(),
-				Reference:  "v1.2.3",
-			}
+			dependency = server.URL()
 
 			server.AppendHandlers(ghttp.CombineHandlers(
 				ghttp.VerifyRequest("GET", "/"),
