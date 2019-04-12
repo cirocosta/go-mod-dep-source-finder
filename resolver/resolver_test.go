@@ -104,7 +104,7 @@ var _ = Describe("FindGoImport", func() {
 	})
 })
 
-var _ = Describe("Resolver", func() {
+var _ = Describe("Resolve", func() {
 
 	var (
 		server     *ghttp.Server

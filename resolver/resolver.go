@@ -45,6 +45,17 @@ func doRequest(ctx context.Context, url string) (resp *http.Response, err error)
 	return
 }
 
+// GoImport is a representation of the contents that get parsed from
+// a `go-import` meta element in an HTML page.
+//
+// For instance:
+//
+// 	<meta
+// 		name="go-import"
+// 		content="gopkg.in/yaml.v2 git https://gopkg.in/yaml.v2" --> what GoImport represents
+// 	>
+//
+//
 type GoImport struct {
 	ImportPrefix string
 	VCS          string
@@ -87,10 +98,12 @@ func FindGoImport(reader io.Reader) (importLine string, found bool, err error) {
 
 	doc.Find(`meta[name="go-import"]`).Each(func(i int, s *goquery.Selection) {
 		content, exists := s.Attr("content")
-		if exists {
-			found = true
-			importLine = content
+		if !exists {
+			return
 		}
+
+		found = true
+		importLine = content
 	})
 
 	return
@@ -109,7 +122,7 @@ func Resolve(ctx context.Context, dependency string) (loc Location, err error) {
 
 	defer resp.Body.Close()
 
-	_, found, err := FindGoImport(resp.Body)
+	goImportContent, found, err := FindGoImport(resp.Body)
 	if err != nil {
 		err = errors.Wrapf(err, "failed to find `go-import` in body")
 		return
@@ -119,6 +132,15 @@ func Resolve(ctx context.Context, dependency string) (loc Location, err error) {
 		err = errors.Errorf("import line not found")
 		return
 	}
+
+	goImport, err := ParseGoImport(goImportContent)
+	if err != nil {
+		err = errors.Wrapf(err, "failed parsing go import content")
+		return
+	}
+
+	loc.URL = goImport.RepoRoot
+	loc.VCS = goImport.VCS
 
 	return
 }
