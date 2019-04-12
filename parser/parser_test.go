@@ -8,6 +8,42 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+var _ = Describe("StripVersionFromDependency", func() {
+
+	type testCase struct {
+		input       string
+		expected    string
+		shouldError bool
+	}
+
+	DescribeTable("varying possible dependencies",
+		func(tc testCase) {
+			actual, err := parser.StripVersionFromDependency(tc.input)
+
+			if tc.shouldError {
+				Expect(err).To(HaveOccurred())
+				return
+			}
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(actual).To(Equal(tc.expected))
+		},
+		Entry("empty", testCase{
+			input:       "",
+			shouldError: true,
+		}),
+		Entry("without version at the end", testCase{
+			input:       "github.com/something/else",
+			shouldError: true,
+		}),
+		Entry("with version at the end", testCase{
+			input:    "github.com/something/else/v2",
+			expected: "github.com/something/else",
+		}),
+	)
+
+})
+
 var _ = Describe("ParseLine", func() {
 
 	type testCase struct {
@@ -25,6 +61,7 @@ var _ = Describe("ParseLine", func() {
 				return
 			}
 
+			Expect(err).ToNot(HaveOccurred())
 			Expect(line).To(Equal(tc.parsedLine))
 
 		},
@@ -36,7 +73,6 @@ var _ = Describe("ParseLine", func() {
 			line:        "aaaaa",
 			shouldError: true,
 		}),
-
 		Entry("without a semver after first field", testCase{
 			line:        "aaa bbb",
 			shouldError: true,
@@ -45,14 +81,25 @@ var _ = Describe("ParseLine", func() {
 			line:       "aaa v1.2.3",
 			parsedLine: parser.Line{"aaa", "v1.2.3"},
 		}),
-
 		Entry("having leading spaces", testCase{
 			line:       "   aaa v1.2.3",
 			parsedLine: parser.Line{"aaa", "v1.2.3"},
 		}),
+		Entry("having version suffix", testCase{
+			line:       "   aaa/v3 v3.2.3",
+			parsedLine: parser.Line{"aaa", "v3.2.3"},
+		}),
+		Entry("being an incompatible version", testCase{
+			line:       "code.cloudfoundry.org/lager v2.0.0+incompatible",
+			parsedLine: parser.Line{"code.cloudfoundry.org/lager", "v2.0.0"},
+		}),
 		Entry("having trailing fields", testCase{
 			line:       "   aaa v1.2.3 // indirect",
 			parsedLine: parser.Line{"aaa", "v1.2.3"},
+		}),
+		Entry("having a pseudo-version", testCase{
+			line:       "   aaa v0.0.0-20180518195852-02e53af36e6c // indirect",
+			parsedLine: parser.Line{"aaa", "02e53af36e6c"},
 		}),
 	)
 })
@@ -74,6 +121,7 @@ var _ = Describe("ParseVersion", func() {
 				return
 			}
 
+			Expect(err).ToNot(HaveOccurred())
 			Expect(reference).To(Equal(tc.reference))
 		},
 		Entry("empty", testCase{

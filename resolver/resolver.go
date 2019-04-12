@@ -116,7 +116,10 @@ func Resolve(ctx context.Context, dependency string) (loc Location, err error) {
 
 	resp, err = doRequest(ctx, dependency)
 	if err != nil {
-		err = errors.Wrapf(err, "failed to issue request for dependency - %+v", dependency)
+		err = errors.Wrapf(err,
+			"failed to issue request for dependency - %+v",
+			dependency,
+		)
 		return
 	}
 

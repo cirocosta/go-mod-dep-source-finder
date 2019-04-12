@@ -28,6 +28,7 @@ func ParseVersion(ver string) (ref string, err error) {
 	if err != nil {
 		err = errors.Wrapf(err,
 			"failed to parse semver")
+		return
 	}
 
 	ref = strings.TrimSuffix(ver, "+incompatible")
@@ -61,34 +62,76 @@ func tryVersionDateSha(ver string) (ref string, ok bool) {
 	return
 }
 
-// ParseLine parses a single dependency line, returning the struct
-// that represents its contents, with the version already interpreted
-// as a reference.
+// isAboveV1 verifies whether the version supplied corresponds to
+// a version that is >= v2.
 //
-func ParseLine(content string) (line Line, err error) {
-	if content == "" {
-		err = errors.Errorf("line must not be empty")
-		return
+// ps.: panics if `content` is not a valid semver.
+//
+func isAboveV1(content string) bool {
+	ver, err := version.NewVersion(content)
+	if err != nil {
+		panic(errors.Wrapf(err, "must've provided a valid semver"))
 	}
 
-	fields := strings.Fields(content)
-	if len(fields) < 2 {
-		err = errors.Errorf("not enough fields")
-		return
+	segments := ver.Segments()
+	return segments[0] > 1
+}
+
+// isNotIncompatible checks whether the version is considered incompatible
+// or not.
+func isNotIncompatible(content string) bool {
+	ver, err := version.NewVersion(content)
+	if err != nil {
+		panic(errors.Wrapf(err, "must've provided a valid semver"))
 	}
 
-	line.Dependency = fields[0]
-	line.Reference, err = ParseVersion(fields[1])
+	return ver.Metadata() != "incompatible"
+}
+
+// isVersionedDependency checks if the dependency provided at `content` is
+// a dependency that is supposed to have a version in the end.
+//
+// Ref: https://github.com/golang/go/wiki/Modules#semantic-import-versioning
+//
+func isVersionedDependency(content string) bool {
+	return !strings.HasPrefix(content, "gopkg.in")
+}
+
+// StripVersionFromDependency removes the version that might exist as the last
+// fields in the `require` path for such dependency.
+//
+// For instance, having in `go.mod`:
+//
+// 	require github.com/my/mod/v2 v2.0.0
+//
+// This method would take:
+//
+// 	github.com/my/mod/v2
+//
+// And return
+//
+// 	github.com/my/mod
+//
+// If the last piece is a proper semver version, erroring otherwise.
+//
+func StripVersionFromDependency(content string) (res string, err error) {
+	fields := strings.Split(content, "/")
+	lastField := fields[len(fields)-1]
+
+	_, err = version.NewVersion(lastField)
 	if err != nil {
 		err = errors.Wrapf(err,
-			"failed to parse version in line")
+			"failed to parse semver")
 		return
 	}
 
+	res = strings.Join(fields[0:len(fields)-1], "/")
 	return
 }
 
-// Parse parses a go.mod dependency line.
+// ParseLine parses a single dependency line, returning the struct
+// that represents its contents, with the version already interpreted
+// as a reference.
 //
 //
 // 	gopkg.in/gorethink/gorethink.v4 v4.1.0+incompatible // indirect
@@ -102,6 +145,35 @@ func ParseLine(content string) (line Line, err error) {
 //        dependency name (where to ask for go source code)
 //
 //
-// func Parse() (dep Dependency, err error) {
-// 	return
-// }
+//
+func ParseLine(content string) (line Line, err error) {
+	fields := strings.Fields(content)
+
+	if len(fields) < 2 {
+		err = errors.Errorf("not enough fields")
+		return
+	}
+
+	dependency := fields[0]
+	version := fields[1]
+
+	line.Reference, err = ParseVersion(version)
+	if err != nil {
+		err = errors.Wrapf(err,
+			"failed to parse version in line")
+		return
+	}
+
+	if isAboveV1(version) && isNotIncompatible(version) && isVersionedDependency(dependency) {
+		dependency, err = StripVersionFromDependency(dependency)
+		if err != nil {
+			err = errors.Wrapf(err,
+				"failed to strip version from dependency")
+			return
+		}
+	}
+
+	line.Dependency = dependency
+
+	return
+}
