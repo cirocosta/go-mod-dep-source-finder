@@ -6,7 +6,7 @@ image_resource:
   source: {repository: golang}
 
 inputs:
-- name: concourse-repo
+- name: repo
   path: .
  
 outputs:

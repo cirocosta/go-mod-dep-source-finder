@@ -16,6 +16,11 @@ resources:
     source:
       uri: https://github.com/concourse/concourse
 
+  - name: kubernetes-repo
+    type: git
+    source:
+      uri: https://github.com/kubernetes/kubernetes
+
 
 jobs:
   - name: build
@@ -32,7 +37,7 @@ jobs:
         get_params: {format: oci}
         params: {image: image/image.tar}
 
-  - name: execute
+  - name: concourse-deps
     public: true
     serial: true
     plan:
@@ -46,6 +51,27 @@ jobs:
         - get: concourse-repo
           trigger: true
       - task: gather-dependencies
+        input_mapping: {repo: concourse-repo}
+        file: repository/ci/tasks/gather-dependencies-list.yml
+      - task: execute
+        image: container-image
+        file: repository/ci/tasks/resolve-concourse-deps.yml
+
+  - name: kubernetes-deps
+    public: true
+    serial: true
+    plan:
+      - aggregate:
+        - get: repository
+          passed: [build]
+          trigger: true
+        - get: container-image
+          passed: [build]
+          trigger: true
+        - get: kubernetes-repo
+          trigger: true
+      - task: gather-dependencies
+        input_mapping: {repo: concourse-repo}
         file: repository/ci/tasks/gather-dependencies-list.yml
       - task: execute
         image: container-image
