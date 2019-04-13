@@ -13,6 +13,49 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+var _ = Describe("RetrieveLocationFromKnownHostingWebsite", func() {
+
+	type testCase struct {
+		input           string
+		expected        resolver.Location
+		isIndeedUnknown bool
+		shouldError     bool
+	}
+
+	DescribeTable("varying possible dependencies",
+		func(tc testCase) {
+			actual, unknownHost, err := resolver.RetrieveLocationFromKnownHostingWebsite(tc.input)
+			if tc.shouldError {
+				Expect(err).To(HaveOccurred())
+				return
+			}
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(unknownHost).To(Equal(tc.isIndeedUnknown))
+			Expect(actual).To(Equal(tc.expected))
+
+		},
+		Entry("unknown host", testCase{
+			input:           "gopkg.in/yaml.v2",
+			isIndeedUnknown: true,
+		}),
+		Entry("github", testCase{
+			input: "https://github.com/foo/bar",
+			expected: resolver.Location{
+				URL: "https://github.com/foo/bar",
+				VCS: "git",
+			},
+		}),
+		Entry("bitbucket", testCase{
+			input: "https://bitbucket.org/bertimus9/systemstat",
+			expected: resolver.Location{
+				URL: "https://bitbucket.org/bertimus9/systemstat",
+				VCS: "git",
+			},
+		}),
+	)
+})
+
 var _ = Describe("ParseGoImportContent", func() {
 
 	type testCase struct {
@@ -48,7 +91,6 @@ var _ = Describe("ParseGoImportContent", func() {
 			},
 		}),
 	)
-
 })
 
 var _ = Describe("FindGoImport", func() {

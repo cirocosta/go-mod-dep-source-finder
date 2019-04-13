@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -106,11 +107,36 @@ func FindGoImport(reader io.Reader) (importLine string, found bool, err error) {
 	return
 }
 
-// Resolve retrieves a dependency's source code location from a dependency line.
+// RetrieveLocationFromKnownHostingWebsite tries to retrieve a Location for a given dependency
+// from a known set of rules for a common set of hosting websites.
 //
-func Resolve(ctx context.Context, dependency string) (loc Location, err error) {
-	var resp *http.Response
+// Ref: https://github.com/golang/go/blob/cf8cc7f63c7ddefb666a6e8d99a4843d3277db9f/src/cmd/go/internal/help/helpdoc.go#L152-L158
+//
+func RetrieveLocationFromKnownHostingWebsite(address string) (loc Location, unknownHost bool, err error) {
+	parsedUrl, err := url.Parse(address)
+	if err != nil {
+		err = errors.Wrapf(err,
+			"failed parsing url")
+		return
+	}
 
+	switch parsedUrl.Host {
+	case "github.com", "bitbucket.org":
+		loc.URL = address
+		loc.VCS = "git"
+	default:
+		unknownHost = true
+		return
+	}
+
+	return
+}
+
+// RetrieveLocationFromGoImport retrieves import location information by performing a
+// request for the dependency website and searching for a `go-import` tag.
+//
+func RetrieveLocationFromGoImport(ctx context.Context, dependency string) (loc Location, err error) {
+	var resp *http.Response
 	resp, err = doRequest(ctx, dependency)
 	if err != nil {
 		err = errors.Wrapf(err,
@@ -141,6 +167,33 @@ func Resolve(ctx context.Context, dependency string) (loc Location, err error) {
 
 	loc.URL = goImport.RepoRoot
 	loc.VCS = goImport.VCS
+
+	return
+}
+
+// Resolve retrieves a dependency's source code location from a dependency line, eventually
+// performing an underlying HTTP request for retriving the `go-import` tag if needed.
+//
+func Resolve(ctx context.Context, dependency string) (loc Location, err error) {
+	var isUnknownHostingWebsite bool
+
+	loc, isUnknownHostingWebsite, err = RetrieveLocationFromKnownHostingWebsite(
+		dependency,
+	)
+	if err != nil {
+		err = errors.Wrapf(err, "errored trying to get location from known website - dep: %s", dependency)
+		return
+	}
+
+	if !isUnknownHostingWebsite {
+		return
+	}
+
+	loc, err = RetrieveLocationFromGoImport(ctx, dependency)
+	if err != nil {
+		err = errors.Wrapf(err, "errored trying to get location from go-import - dep: %s", dependency)
+		return
+	}
 
 	return
 }
