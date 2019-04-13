@@ -39,11 +39,6 @@ func doRequest(ctx context.Context, url string) (resp *http.Response, err error)
 		return
 	}
 
-	if resp.StatusCode < 200 || resp.StatusCode >= 400 {
-		err = errors.Errorf("non-success status code %d", resp.StatusCode)
-		return
-	}
-
 	return
 }
 
