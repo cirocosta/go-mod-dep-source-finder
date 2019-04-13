@@ -1,0 +1,42 @@
+[
+  {
+    "name": "kubernetes",
+    "uri": "https://github.com/kubernetes/kubernetes"
+  },
+  {
+    "name": "prometheus",
+    "uri": "https://github.com/prometheus/prometheus"
+  },
+  {
+    "name": "concourse",
+    "uri": "https://github.com/concourse/concourse"
+  },
+  {
+    "name": "hugo",
+    "uri": "https://github.com/gohugoio/hugo"
+  },
+  {
+    "name": "sourcegraph",
+    "uri": "https://github.com/sourcegraph/sourcegraph"
+  },
+  {
+    "name": "gin",
+    "uri": "https://github.com/gin-gonic/gin"
+  },
+  {
+    "name": "syncthing",
+    "uri": "https://github.com/syncthing/syncthing"
+  },
+  {
+    "name": "etcd",
+    "uri": "https://github.com/etcd-io/etcd"
+  },
+  {
+    "name": "frp",
+    "uri": "https://github.com/fatedier/frp"
+  },
+  {
+    "name": "caddy",
+    "uri": "https://github.com/mholt/caddy"
+  }
+]

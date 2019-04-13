@@ -1,0 +1,599 @@
+{
+   "jobs": [
+      {
+         "name": "kubernetes-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "kubernetes-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "kubernetes-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "prometheus-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "prometheus-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "prometheus-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "hugo-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "hugo-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "hugo-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "sourcegraph-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "sourcegraph-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "sourcegraph-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "gin-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "gin-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "gin-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "syncthing-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "syncthing-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "syncthing-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "etcd-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "etcd-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "etcd-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "frp-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "frp-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "frp-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "caddy-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "caddy-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "caddy-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "build",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "alpine",
+                     "trigger": true
+                  },
+                  {
+                     "get": "golang-alpine",
+                     "trigger": true
+                  },
+                  {
+                     "get": "repository",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/build-image.yml",
+               "privileged": true,
+               "task": "build-image"
+            },
+            {
+               "get_params": {
+                  "format": "oci"
+               },
+               "inputs": [
+                  "image"
+               ],
+               "params": {
+                  "image": "image/image.tar"
+               },
+               "put": "rc-image"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "publish-image",
+         "plan": [
+            {
+               "get": "rc-image",
+               "params": {
+                  "format": "oci"
+               },
+               "passed": [
+                  "kubernetes-deps",
+                  "prometheus-deps",
+                  "concourse-deps",
+                  "hugo-deps",
+                  "sourcegraph-deps",
+                  "gin-deps",
+                  "syncthing-deps",
+                  "etcd-deps",
+                  "frp-deps",
+                  "caddy-deps"
+               ],
+               "trigger": true
+            },
+            {
+               "params": {
+                  "image": "rc-image/image.tar"
+               },
+               "put": "final-image"
+            }
+         ],
+         "public": true,
+         "serial": true
+      }
+   ],
+   "resources": [
+      {
+         "name": "kubernetes-repo",
+         "source": {
+            "uri": "https://github.com/kubernetes/kubernetes"
+         },
+         "type": "git"
+      },
+      {
+         "name": "prometheus-repo",
+         "source": {
+            "uri": "https://github.com/prometheus/prometheus"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-repo",
+         "source": {
+            "uri": "https://github.com/concourse/concourse"
+         },
+         "type": "git"
+      },
+      {
+         "name": "hugo-repo",
+         "source": {
+            "uri": "https://github.com/gohugoio/hugo"
+         },
+         "type": "git"
+      },
+      {
+         "name": "sourcegraph-repo",
+         "source": {
+            "uri": "https://github.com/sourcegraph/sourcegraph"
+         },
+         "type": "git"
+      },
+      {
+         "name": "gin-repo",
+         "source": {
+            "uri": "https://github.com/gin-gonic/gin"
+         },
+         "type": "git"
+      },
+      {
+         "name": "syncthing-repo",
+         "source": {
+            "uri": "https://github.com/syncthing/syncthing"
+         },
+         "type": "git"
+      },
+      {
+         "name": "etcd-repo",
+         "source": {
+            "uri": "https://github.com/etcd-io/etcd"
+         },
+         "type": "git"
+      },
+      {
+         "name": "frp-repo",
+         "source": {
+            "uri": "https://github.com/fatedier/frp"
+         },
+         "type": "git"
+      },
+      {
+         "name": "caddy-repo",
+         "source": {
+            "uri": "https://github.com/mholt/caddy"
+         },
+         "type": "git"
+      },
+      {
+         "name": "repository",
+         "source": {
+            "uri": "https://((github-token))@github.com/cirocosta/go-mod-dep-source-finder"
+         },
+         "type": "git"
+      },
+      {
+         "name": "alpine",
+         "source": {
+            "repository": "alpine"
+         },
+         "type": "registry-image"
+      },
+      {
+         "name": "golang-alpine",
+         "source": {
+            "repository": "golang",
+            "tag": "alpine"
+         },
+         "type": "registry-image"
+      },
+      {
+         "name": "rc-image",
+         "source": {
+            "password": "((docker-password))",
+            "repository": "cirocosta/go-mod-dep-source-finder",
+            "tag": "rc",
+            "username": "((docker-user))"
+         },
+         "type": "registry-image"
+      },
+      {
+         "name": "final-image",
+         "source": {
+            "password": "((docker-password))",
+            "repository": "cirocosta/go-mod-dep-source-finder",
+            "username": "((docker-user))"
+         },
+         "type": "registry-image"
+      }
+   ]
+}
