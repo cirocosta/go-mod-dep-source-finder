@@ -55,7 +55,7 @@ jobs:
         file: repository/ci/tasks/gather-dependencies-list.yml
       - task: execute
         image: container-image
-        file: repository/ci/tasks/resolve-concourse-deps.yml
+        file: repository/ci/tasks/resolve-deps.yml
 
   - name: kubernetes-deps
     public: true
@@ -75,4 +75,4 @@ jobs:
         file: repository/ci/tasks/gather-dependencies-list.yml
       - task: execute
         image: container-image
-        file: repository/ci/tasks/resolve-concourse-deps.yml
+        file: repository/ci/tasks/resolve-deps.yml
