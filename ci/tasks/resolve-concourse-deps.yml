@@ -6,15 +6,12 @@ image_resource:
   source: {repository: cirocosta/go-mod-license-finder}
 
 inputs:
-- name: concourse-repo
+- name: dependencies
   path: .
-
-outputs:
-- name: image
 
 run: 
   path: /bin/sh
   args:
     - -ce
     - |
-      go list -m all | go-mod-license-finder -
+      cat ./dependencies.txt | go-mod-license-finder -

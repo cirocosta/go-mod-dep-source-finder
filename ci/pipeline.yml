@@ -32,7 +32,7 @@ jobs:
         get_params: {format: oci}
         params: {image: image/image.tar}
 
-  - name: build
+  - name: execute
     public: true
     serial: true
     plan:
@@ -45,6 +45,8 @@ jobs:
           trigger: true
         - get: concourse-repo
           trigger: true
+      - task: gather-dependencies
+        file: repository/ci/tasks/gather-dependencies-list.yml
       - task: execute
         image: container-image
         file: repository/ci/tasks/resolve-concourse-deps.yml
