@@ -21,6 +21,16 @@ resources:
     source:
       uri: https://github.com/kubernetes/kubernetes
 
+  - name: sourcegraph-repo
+    type: git
+    source:
+      uri: https://github.com/sourcegraph/sourcegraph
+
+  - name: prometheus-repo
+    type: git
+    source:
+      uri: https://github.com/prometheus/prometheus
+
 
 jobs:
   - name: build
@@ -71,8 +81,51 @@ jobs:
         - get: kubernetes-repo
           trigger: true
       - task: gather-dependencies
-        input_mapping: {repo: concourse-repo}
+        input_mapping: {repo: kubernetes-repo}
         file: repository/ci/tasks/gather-dependencies-list.yml
       - task: execute
         image: container-image
         file: repository/ci/tasks/resolve-deps.yml
+
+
+  - name: sourcegraph-deps
+    public: true
+    serial: true
+    plan:
+      - aggregate:
+        - get: repository
+          passed: [build]
+          trigger: true
+        - get: container-image
+          passed: [build]
+          trigger: true
+        - get: sourcegraph-repo
+          trigger: true
+      - task: gather-dependencies
+        input_mapping: {repo: sourcegraph-repo}
+        file: repository/ci/tasks/gather-dependencies-list.yml
+      - task: execute
+        image: container-image
+        file: repository/ci/tasks/resolve-deps.yml
+
+
+  - name: prometheus-deps
+    public: true
+    serial: true
+    plan:
+      - aggregate:
+        - get: repository
+          passed: [build]
+          trigger: true
+        - get: container-image
+          passed: [build]
+          trigger: true
+        - get: prometheus-repo
+          trigger: true
+      - task: gather-dependencies
+        input_mapping: {repo: prometheus-repo}
+        file: repository/ci/tasks/gather-dependencies-list.yml
+      - task: execute
+        image: container-image
+        file: repository/ci/tasks/resolve-deps.yml
+
