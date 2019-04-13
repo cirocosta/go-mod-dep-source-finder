@@ -11,6 +11,7 @@ import (
 
 	"github.com/cirocosta/go-mod-license-finder/parser"
 	"github.com/cirocosta/go-mod-license-finder/resolver"
+	"golang.org/x/sync/errgroup"
 )
 
 // [cc]: add flags for requests timeout
@@ -26,10 +27,10 @@ func failWithHelp(messageFormat string, args ...interface{}) {
 	os.Exit(1)
 }
 
-func execute(text string) {
+func execute(ctx context.Context, text string) error {
 	line, err := parser.ParseLine(text)
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
 
 	location, err := resolver.Resolve(
@@ -37,13 +38,12 @@ func execute(text string) {
 		"https://"+line.Dependency,
 	)
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
 
-	log.Printf("%+v\n", location)
+	log.Printf("%+v - %+v\n", location, line.Reference)
 
-	// [cc]: perform clone .. etc
-	// 	what could be a good name for such component?
+	return nil
 }
 
 func main() {
@@ -61,7 +61,18 @@ func main() {
 	}
 
 	scanner := bufio.NewScanner(reader)
+	group, ctx := errgroup.WithContext(context.Background())
+
 	for scanner.Scan() {
-		execute(scanner.Text())
+		text := scanner.Text()
+
+		group.Go(func() error {
+			return execute(ctx, text)
+		})
+	}
+
+	err := group.Wait()
+	if err != nil {
+		log.Panic(err)
 	}
 }

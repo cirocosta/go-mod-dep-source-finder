@@ -93,6 +93,10 @@ var _ = Describe("ParseLine", func() {
 			line:       "code.cloudfoundry.org/lager v2.0.0+incompatible",
 			parsedLine: parser.Line{"code.cloudfoundry.org/lager", "v2.0.0"},
 		}),
+		Entry("being a directory within a github repo", testCase{
+			line:       "github.com/ugorji/go/codec v0.0.0-20181209151446-772ced7fd4c2 // indirect",
+			parsedLine: parser.Line{"github.com/ugorji/go", "772ced7fd4c2"},
+		}),
 		Entry("having trailing fields", testCase{
 			line:       "   aaa v1.2.3 // indirect",
 			parsedLine: parser.Line{"aaa", "v1.2.3"},

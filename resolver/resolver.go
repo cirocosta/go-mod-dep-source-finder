@@ -28,8 +28,10 @@ func doRequest(ctx context.Context, url string) (resp *http.Response, err error)
 	}
 
 	req = req.WithContext(ctx)
+
 	queryParams := req.URL.Query()
 	queryParams.Add("go-get", "1")
+	req.URL.RawQuery = queryParams.Encode()
 
 	resp, err = http.DefaultClient.Do(req)
 	if err != nil {
@@ -117,7 +119,7 @@ func Resolve(ctx context.Context, dependency string) (loc Location, err error) {
 	resp, err = doRequest(ctx, dependency)
 	if err != nil {
 		err = errors.Wrapf(err,
-			"failed to issue request for dependency - %+v",
+			"failed to issue request for dependency - %s",
 			dependency,
 		)
 		return
@@ -127,18 +129,18 @@ func Resolve(ctx context.Context, dependency string) (loc Location, err error) {
 
 	goImportContent, found, err := FindGoImport(resp.Body)
 	if err != nil {
-		err = errors.Wrapf(err, "failed to find `go-import` in body")
+		err = errors.Wrapf(err, "failed to find `go-import` in body from %s", dependency)
 		return
 	}
 
 	if !found {
-		err = errors.Errorf("import line not found")
+		err = errors.Errorf("import line not found for %s", dependency)
 		return
 	}
 
 	goImport, err := ParseGoImport(goImportContent)
 	if err != nil {
-		err = errors.Wrapf(err, "failed parsing go import content")
+		err = errors.Wrapf(err, "failed parsing go import content from dependency %s", dependency)
 		return
 	}
 

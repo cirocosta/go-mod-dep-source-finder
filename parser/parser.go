@@ -129,6 +129,19 @@ func StripVersionFromDependency(content string) (res string, err error) {
 	return
 }
 
+func sanitizeGithubDependency(content string) string {
+	fields := strings.Split(content, "/")
+	return fields[0] + "/" + fields[1] + "/" + fields[2]
+}
+
+func SanitizeDependency(content string) string {
+	if strings.HasPrefix(content, "github.com") {
+		return sanitizeGithubDependency(content)
+	}
+
+	return content
+}
+
 // ParseLine parses a single dependency line, returning the struct
 // that represents its contents, with the version already interpreted
 // as a reference.
@@ -150,7 +163,7 @@ func ParseLine(content string) (line Line, err error) {
 	fields := strings.Fields(content)
 
 	if len(fields) < 2 {
-		err = errors.Errorf("not enough fields")
+		err = errors.Errorf("not enough fields in line '%s'", content)
 		return
 	}
 
@@ -173,7 +186,7 @@ func ParseLine(content string) (line Line, err error) {
 		}
 	}
 
-	line.Dependency = dependency
+	line.Dependency = SanitizeDependency(dependency)
 
 	return
 }

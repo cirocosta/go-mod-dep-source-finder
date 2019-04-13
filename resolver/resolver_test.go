@@ -133,7 +133,7 @@ var _ = Describe("Resolve", func() {
 		BeforeEach(func() {
 			dependency = server.URL()
 			serverHandlers = append(serverHandlers,
-				ghttp.VerifyRequest("GET", "/"),
+				ghttp.VerifyRequest("GET", "/", "go-get=1"),
 			)
 		})
 
