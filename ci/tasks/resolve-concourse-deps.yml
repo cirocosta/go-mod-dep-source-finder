@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: {repository: cirocosta/go-mod-license-finder}
+
+inputs:
+- name: concourse-repo
+  path: .
+
+outputs:
+- name: image
+
+run: 
+  path: /bin/sh
+  args:
+    - -ce
+    - |
+      go list -m all | go-mod-license-finder -

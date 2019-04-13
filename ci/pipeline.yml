@@ -11,6 +11,11 @@ resources:
       username: ((docker-user))
       password: ((docker-password))
 
+  - name: concourse-repo
+    type: git
+    source:
+      uri: https://github.com/concourse/concourse
+
 
 jobs:
   - name: build
@@ -26,3 +31,20 @@ jobs:
         inputs: [image]
         get_params: {format: oci}
         params: {image: image/image.tar}
+
+  - name: build
+    public: true
+    serial: true
+    plan:
+      - aggregate:
+        - get: repository
+          passed: [build]
+          trigger: true
+        - get: container-image
+          passed: [build]
+          trigger: true
+        - get: concourse-repo
+          trigger: true
+      - task: execute
+        image: container-image
+        file: repository/ci/tasks/resolve-concourse-deps.yml
