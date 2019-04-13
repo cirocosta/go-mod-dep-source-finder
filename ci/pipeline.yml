@@ -4,10 +4,19 @@ resources:
     source:
       uri: https://((github-token))@github.com/cirocosta/go-mod-license-finder
 
-  - name: container-image
+  - name: rc-image
     type: registry-image
     source:
       repository: cirocosta/go-mod-license-finder
+      tag: rc
+      username: ((docker-user))
+      password: ((docker-password))
+
+  - name: final-image
+    type: registry-image
+    source:
+      repository: cirocosta/go-mod-license-finder
+      tag: latest
       username: ((docker-user))
       password: ((docker-password))
 
@@ -42,7 +51,7 @@ jobs:
       - task: build-image
         privileged: true
         file: repository/ci/tasks/build-image.yml
-      - put: container-image
+      - put: rc-image
         inputs: [image]
         get_params: {format: oci}
         params: {image: image/image.tar}
@@ -55,7 +64,7 @@ jobs:
         - get: repository
           passed: [build]
           trigger: true
-        - get: container-image
+        - get: rc-image
           passed: [build]
           trigger: true
         - get: concourse-repo
@@ -64,7 +73,7 @@ jobs:
         input_mapping: {repo: concourse-repo}
         file: repository/ci/tasks/gather-dependencies-list.yml
       - task: execute
-        image: container-image
+        image: rc-image
         file: repository/ci/tasks/resolve-deps.yml
 
   - name: kubernetes-deps
@@ -75,7 +84,7 @@ jobs:
         - get: repository
           passed: [build]
           trigger: true
-        - get: container-image
+        - get: rc-image
           passed: [build]
           trigger: true
         - get: kubernetes-repo
@@ -84,7 +93,7 @@ jobs:
         input_mapping: {repo: kubernetes-repo}
         file: repository/ci/tasks/gather-dependencies-list.yml
       - task: execute
-        image: container-image
+        image: rc-image
         file: repository/ci/tasks/resolve-deps.yml
 
 
@@ -96,7 +105,7 @@ jobs:
         - get: repository
           passed: [build]
           trigger: true
-        - get: container-image
+        - get: rc-image
           passed: [build]
           trigger: true
         - get: sourcegraph-repo
@@ -105,7 +114,7 @@ jobs:
         input_mapping: {repo: sourcegraph-repo}
         file: repository/ci/tasks/gather-dependencies-list.yml
       - task: execute
-        image: container-image
+        image: rc-image
         file: repository/ci/tasks/resolve-deps.yml
 
 
@@ -117,7 +126,7 @@ jobs:
         - get: repository
           passed: [build]
           trigger: true
-        - get: container-image
+        - get: rc-image
           passed: [build]
           trigger: true
         - get: prometheus-repo
@@ -126,6 +135,16 @@ jobs:
         input_mapping: {repo: prometheus-repo}
         file: repository/ci/tasks/gather-dependencies-list.yml
       - task: execute
-        image: container-image
+        image: rc-image
         file: repository/ci/tasks/resolve-deps.yml
 
+  - name: publish-image
+    public: true
+    serial: true
+    plan:
+      - get: rc-image
+        params: {format: oci}
+        passed: [concourse-deps,prometheus-deps,sourcegraph-deps,kubernetes-deps]
+        trigger: true
+      - put: final-image
+        params: {image: rc-image/image.tar}
