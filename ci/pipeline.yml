@@ -4,6 +4,17 @@ resources:
     source:
       uri: https://((github-token))@github.com/cirocosta/go-mod-license-finder
 
+  - name: alpine
+    type: registry-image
+    source:
+      repository: alpine
+
+  - name: golang-alpine
+    type: registry-image
+    source:
+      repository: golang
+      tag: alpine
+
   - name: rc-image
     type: registry-image
     source:
@@ -46,8 +57,13 @@ jobs:
     public: true
     serial: true
     plan:
-      - get: repository
-        trigger: true
+      - aggregate:
+        - get: alpine
+          trigger: true
+        - get: golang-alpine
+          trigger: true
+        - get: repository
+          trigger: true
       - task: build-image
         privileged: true
         file: repository/ci/tasks/build-image.yml
