@@ -14,4 +14,4 @@ run:
   args:
     - -ce
     - |
-      cat ./dependencies.txt | go-mod-license-finder -
+      cat ./dependencies.txt | tail -n +2 | go-mod-license-finder -
