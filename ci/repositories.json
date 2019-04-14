@@ -50,5 +50,53 @@
   {
     "name": "concourse-s3-resource",
     "uri": "https://github.com/concourse/s3-resource"
+  },
+  {
+    "name": "concourse-docker-image-resource",
+    "uri": "https://github.com/concourse/docker-image-resource"
+  },
+  {
+    "name": "concourse-semver-resource",
+    "uri": "https://github.com/concourse/semver-resource"
+  },
+  {
+    "name": "concourse-github-release-resource",
+    "uri": "https://github.com/concourse/github-release-resource"
+  },
+  {
+    "name": "concourse-cf-resource",
+    "uri": "https://github.com/concourse/cf-resource"
+  },
+  {
+    "name": "concourse-concourse-pipeline-resource",
+    "uri": "https://github.com/concourse/concourse-pipeline-resource"
+  },
+  {
+    "name": "concourse-pool-resource",
+    "uri": "https://github.com/concourse/pool-resource"
+  },
+  {
+    "name": "concourse-time-resource",
+    "uri": "https://github.com/concourse/time-resource"
+  },
+  {
+    "name": "concourse-tracker-resource",
+    "uri": "https://github.com/concourse/tracker-resource"
+  },
+  {
+    "name": "concourse-registry-image-resource",
+    "uri": "https://github.com/concourse/registry-image-resource"
+  },
+  {
+    "name": "concourse-bosh-io-stemcell-resource",
+    "uri": "https://github.com/concourse/bosh-io-stemcell-resource"
+  },
+  {
+    "name": "concourse-datadog-event-resource",
+    "uri": "https://github.com/concourse/datadog-event-resource"
+  },
+  {
+    "name": "concourse-mock-resource",
+    "uri": "https://github.com/concourse/mock-resource"
   }
 ]

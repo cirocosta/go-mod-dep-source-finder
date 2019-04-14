@@ -534,6 +534,498 @@
          "serial": true
       },
       {
+         "name": "concourse-docker-image-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-docker-image-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-docker-image-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-semver-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-semver-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-semver-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-github-release-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-github-release-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-github-release-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-cf-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-cf-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-cf-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-concourse-pipeline-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-concourse-pipeline-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-concourse-pipeline-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-pool-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-pool-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-pool-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-time-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-time-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-time-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-tracker-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-tracker-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-tracker-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-registry-image-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-registry-image-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-registry-image-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-bosh-io-stemcell-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-bosh-io-stemcell-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-bosh-io-stemcell-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-datadog-event-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-datadog-event-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-datadog-event-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-mock-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-mock-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-mock-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
          "name": "build",
          "plan": [
             {
@@ -594,7 +1086,19 @@
                   "caddy-deps",
                   "gitea-deps",
                   "guardian-deps",
-                  "concourse-s3-resource-deps"
+                  "concourse-s3-resource-deps",
+                  "concourse-docker-image-resource-deps",
+                  "concourse-semver-resource-deps",
+                  "concourse-github-release-resource-deps",
+                  "concourse-cf-resource-deps",
+                  "concourse-concourse-pipeline-resource-deps",
+                  "concourse-pool-resource-deps",
+                  "concourse-time-resource-deps",
+                  "concourse-tracker-resource-deps",
+                  "concourse-registry-image-resource-deps",
+                  "concourse-bosh-io-stemcell-resource-deps",
+                  "concourse-datadog-event-resource-deps",
+                  "concourse-mock-resource-deps"
                ],
                "trigger": true
             },
@@ -698,6 +1202,90 @@
          "name": "concourse-s3-resource-repo",
          "source": {
             "uri": "https://github.com/concourse/s3-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-docker-image-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/docker-image-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-semver-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/semver-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-github-release-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/github-release-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-cf-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/cf-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-concourse-pipeline-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/concourse-pipeline-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-pool-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/pool-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-time-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/time-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-tracker-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/tracker-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-registry-image-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/registry-image-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-bosh-io-stemcell-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/bosh-io-stemcell-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-datadog-event-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/datadog-event-resource"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-mock-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/mock-resource"
          },
          "type": "git"
       },

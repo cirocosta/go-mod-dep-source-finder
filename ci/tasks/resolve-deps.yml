@@ -14,5 +14,5 @@ run:
   args:
     - -ce
     - |
-      apk add --update ca-certificates jq
+      apk add -qq --update ca-certificates jq
       cat ./dependencies.txt | tail -n +2 | go-mod-license-finder - | jq
