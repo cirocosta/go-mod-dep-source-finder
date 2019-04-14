@@ -452,6 +452,88 @@
          "serial": true
       },
       {
+         "name": "guardian-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "guardian-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "guardian-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "concourse-s3-resource-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "concourse-s3-resource-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "concourse-s3-resource-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
          "name": "build",
          "plan": [
             {
@@ -510,7 +592,9 @@
                   "etcd-deps",
                   "frp-deps",
                   "caddy-deps",
-                  "gitea-deps"
+                  "gitea-deps",
+                  "guardian-deps",
+                  "concourse-s3-resource-deps"
                ],
                "trigger": true
             },
@@ -600,6 +684,20 @@
          "name": "gitea-repo",
          "source": {
             "uri": "https://github.com/go-gitea/gitea"
+         },
+         "type": "git"
+      },
+      {
+         "name": "guardian-repo",
+         "source": {
+            "uri": "https://github.com/cloudfoundry/guardian"
+         },
+         "type": "git"
+      },
+      {
+         "name": "concourse-s3-resource-repo",
+         "source": {
+            "uri": "https://github.com/concourse/s3-resource"
          },
          "type": "git"
       },

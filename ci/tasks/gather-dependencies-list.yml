@@ -17,4 +17,5 @@ run:
   args:
     - -ce
     - |
+      go mod init || true
       go list -m all > ./dependencies/dependencies.txt

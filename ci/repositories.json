@@ -42,5 +42,13 @@
   {
     "name": "gitea",
     "uri": "https://github.com/go-gitea/gitea"
+  },
+  {
+    "name": "guardian",
+    "uri": "https://github.com/cloudfoundry/guardian"
+  },
+  {
+    "name": "concourse-s3-resource",
+    "uri": "https://github.com/concourse/s3-resource"
   }
 ]
