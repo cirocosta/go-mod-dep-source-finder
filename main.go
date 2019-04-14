@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/cirocosta/go-mod-license-finder/homepage"
 	"github.com/cirocosta/go-mod-license-finder/parser"
 	"github.com/cirocosta/go-mod-license-finder/resolver"
 	"golang.org/x/sync/errgroup"
@@ -41,7 +42,16 @@ func execute(ctx context.Context, text string) error {
 		return err
 	}
 
-	log.Printf("%+v - %+v\n", location, line.Reference)
+	url, unknownHost, err := homepage.Find(location.URL, line.Reference)
+	if err != nil {
+		return err
+	}
+
+	if unknownHost {
+		panic(fmt.Errorf("unknown host for dependency - %s", text))
+	}
+
+	fmt.Printf("%s => %s\n", text, url)
 
 	return nil
 }

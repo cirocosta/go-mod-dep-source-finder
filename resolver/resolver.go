@@ -135,13 +135,14 @@ func RetrieveLocationFromKnownHostingWebsite(address string) (loc Location, unkn
 // RetrieveLocationFromGoImport retrieves import location information by performing a
 // request for the dependency website and searching for a `go-import` tag.
 //
-func RetrieveLocationFromGoImport(ctx context.Context, dependency string) (loc Location, err error) {
+func RetrieveLocationFromGoImport(ctx context.Context, address string) (loc Location, err error) {
 	var resp *http.Response
-	resp, err = doRequest(ctx, dependency)
+
+	resp, err = doRequest(ctx, address)
 	if err != nil {
 		err = errors.Wrapf(err,
 			"failed to issue request for dependency - %s",
-			dependency,
+			address,
 		)
 		return
 	}
@@ -150,18 +151,18 @@ func RetrieveLocationFromGoImport(ctx context.Context, dependency string) (loc L
 
 	goImportContent, found, err := FindGoImport(resp.Body)
 	if err != nil {
-		err = errors.Wrapf(err, "failed to find `go-import` in body from %s", dependency)
+		err = errors.Wrapf(err, "failed to find `go-import` in body from %s", address)
 		return
 	}
 
 	if !found {
-		err = errors.Errorf("import line not found for %s", dependency)
+		err = errors.Errorf("import line not found for %s", address)
 		return
 	}
 
 	goImport, err := ParseGoImport(goImportContent)
 	if err != nil {
-		err = errors.Wrapf(err, "failed parsing go import content from dependency %s", dependency)
+		err = errors.Wrapf(err, "failed parsing go import content from dependency %s", address)
 		return
 	}
 

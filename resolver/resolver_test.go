@@ -56,7 +56,44 @@ var _ = Describe("RetrieveLocationFromKnownHostingWebsite", func() {
 	)
 })
 
-var _ = Describe("ParseGoImportContent", func() {
+var _ = Describe("ParseGoSource", func() {
+
+	type testCase struct {
+		content     string
+		goImport    resolver.GoImport
+		shouldError bool
+	}
+
+	DescribeTable("varying possible content",
+		func(tc testCase) {
+			res, err := resolver.ParseGoImport(tc.content)
+			if tc.shouldError {
+				Expect(err).To(HaveOccurred())
+				return
+			}
+
+			Expect(res).To(Equal(tc.goImport))
+		},
+		Entry("empty", testCase{
+			content:     "",
+			shouldError: true,
+		}),
+		Entry("without enough fields", testCase{
+			content:     "github.com/cirocosta/l4 git",
+			shouldError: true,
+		}),
+		Entry("with enough fields", testCase{
+			content: "github.com/cirocosta/l4 git https://github.com/cirocosta/l4.git",
+			goImport: resolver.GoImport{
+				ImportPrefix: "github.com/cirocosta/l4",
+				VCS:          "git",
+				RepoRoot:     "https://github.com/cirocosta/l4.git",
+			},
+		}),
+	)
+})
+
+var _ = Describe("ParseGoImport", func() {
 
 	type testCase struct {
 		content     string
