@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -28,6 +29,12 @@ func failWithHelp(messageFormat string, args ...interface{}) {
 	os.Exit(1)
 }
 
+type result struct {
+	Original           string `json:"original"`
+	DiscoveredHomePage string `json:"discovered"`
+	Problem            string `json:"problem,omitempty"`
+}
+
 func execute(ctx context.Context, text string) error {
 	line, err := parser.ParseLine(text)
 	if err != nil {
@@ -47,11 +54,21 @@ func execute(ctx context.Context, text string) error {
 		return err
 	}
 
-	if unknownHost {
-		panic(fmt.Errorf("unknown host for dependency - %s", text))
+	res := result{
+		Original:           text,
+		DiscoveredHomePage: url,
 	}
 
-	fmt.Printf("%s => %s\n", text, url)
+	if unknownHost {
+		res.Problem = "unknwon host: " + location.URL
+	}
+
+	jsonBytes, err := json.Marshal(res)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(jsonBytes))
 
 	return nil
 }
