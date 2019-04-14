@@ -114,7 +114,7 @@ local repositoriesJobs = [{
           get: 'rc-image',
           params: { format: 'oci' },
           passed: [repository.name + '-deps' for repository in repositories],
-          trigger: true,
+          trigger: false,
         },
         {
           put: 'final-image',
