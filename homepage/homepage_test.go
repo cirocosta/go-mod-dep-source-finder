@@ -36,6 +36,11 @@ var _ = Describe("Homepage", func() {
 			version:     "v2.0.0",
 			unknownHost: true,
 		}),
+		Entry("gitlab tag", testCase{
+			dependency: "https://gitlab.com/cznic/golex",
+			version:    "v1.0.0",
+			expected:   "https://gitlab.com/cznic/golex/tree/v1.0.0",
+		}),
 		Entry("github tag", testCase{
 			dependency: "https://github.com/cloudfoundry/urljoiner",
 			version:    "v1.2.3",

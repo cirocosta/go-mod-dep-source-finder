@@ -38,5 +38,9 @@
   {
     "name": "caddy",
     "uri": "https://github.com/mholt/caddy"
+  },
+  {
+    "name": "gitea",
+    "uri": "https://github.com/go-gitea/gitea"
   }
 ]

@@ -411,6 +411,47 @@
          "serial": true
       },
       {
+         "name": "gitea-deps",
+         "plan": [
+            {
+               "aggregate": [
+                  {
+                     "get": "repository",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "rc-image",
+                     "passed": [
+                        "build"
+                     ],
+                     "trigger": true
+                  },
+                  {
+                     "get": "gitea-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "repository/ci/tasks/gather-dependencies-list.yml",
+               "input_mapping": {
+                  "repo": "gitea-repo"
+               },
+               "task": "gather-dependencies"
+            },
+            {
+               "file": "repository/ci/tasks/resolve-deps.yml",
+               "image": "rc-image",
+               "task": "run"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
          "name": "build",
          "plan": [
             {
@@ -468,7 +509,8 @@
                   "syncthing-deps",
                   "etcd-deps",
                   "frp-deps",
-                  "caddy-deps"
+                  "caddy-deps",
+                  "gitea-deps"
                ],
                "trigger": true
             },
@@ -551,6 +593,13 @@
          "name": "caddy-repo",
          "source": {
             "uri": "https://github.com/mholt/caddy"
+         },
+         "type": "git"
+      },
+      {
+         "name": "gitea-repo",
+         "source": {
+            "uri": "https://github.com/go-gitea/gitea"
          },
          "type": "git"
       },

@@ -16,7 +16,7 @@ func Find(address, version string) (homepage string, unknownHost bool, err error
 	}
 
 	switch parsedUrl.Host {
-	case "github.com":
+	case "github.com", "gitlab.com":
 		homepage = address + "/tree/" + version
 		return
 	case "bitbucket.org":
