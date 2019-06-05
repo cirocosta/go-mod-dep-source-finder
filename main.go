@@ -13,6 +13,8 @@ import (
 	"github.com/cirocosta/go-mod-license-finder/homepage"
 	"github.com/cirocosta/go-mod-license-finder/parser"
 	"github.com/cirocosta/go-mod-license-finder/resolver"
+	"github.com/cirocosta/go-mod-license-finder/result"
+	sa "github.com/cirocosta/go-mod-license-finder/synchronousarray"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -29,13 +31,7 @@ func failWithHelp(messageFormat string, args ...interface{}) {
 	os.Exit(1)
 }
 
-type result struct {
-	Original           string `json:"original"`
-	DiscoveredHomePage string `json:"discovered"`
-	Problem            string `json:"problem,omitempty"`
-}
-
-func execute(ctx context.Context, text string) error {
+func execute(ctx context.Context, text string, syncArray *sa.SynchronousArray) error {
 	line, err := parser.ParseLine(text)
 	if err != nil {
 		return err
@@ -54,7 +50,7 @@ func execute(ctx context.Context, text string) error {
 		return err
 	}
 
-	res := result{
+	res := result.Result{
 		Original:           text,
 		DiscoveredHomePage: url,
 	}
@@ -63,12 +59,7 @@ func execute(ctx context.Context, text string) error {
 		res.Problem = "unknwon host: " + location.URL
 	}
 
-	jsonBytes, err := json.Marshal(res)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(string(jsonBytes))
+	syncArray.Add(res)
 
 	return nil
 }
@@ -90,11 +81,13 @@ func main() {
 	scanner := bufio.NewScanner(reader)
 	group, ctx := errgroup.WithContext(context.Background())
 
+	syncArray := sa.SynchronousArray{}
+
 	for scanner.Scan() {
 		text := scanner.Text()
 
 		group.Go(func() error {
-			return execute(ctx, text)
+			return execute(ctx, text, &syncArray)
 		})
 	}
 
@@ -102,4 +95,11 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+
+	jsonBytes, err := json.Marshal(syncArray.Results)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(string(jsonBytes))
 }
