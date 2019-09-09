@@ -3,7 +3,7 @@ platform: linux
 
 image_resource:
   type: registry-image
-  source: {repository: concourse/builder}
+  source: {repository: vito/oci-build-task}
 
 params:
   REPOSITORY: cirocosta/go-mod-license-finder
