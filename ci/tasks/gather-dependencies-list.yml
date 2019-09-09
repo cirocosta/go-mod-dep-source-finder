@@ -20,10 +20,11 @@ run:
   args:
     - -ce
     - |
+      dep_file=$(realpath ./dependencies/dependencies.txt)
 
       if [[ "$DIR" != "" ]]; then
         cd $DIR
       fi
 
       go mod init || true
-      go list -m all > ./dependencies/dependencies.txt
+      go list -m all > $dep_file
