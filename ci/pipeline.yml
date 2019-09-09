@@ -1,0 +1,737 @@
+jobs:
+- max_in_flight: 2
+  name: build
+  plan:
+  - aggregate:
+    - get: alpine
+      trigger: true
+    - get: golang-alpine
+      trigger: true
+    - get: repository
+      trigger: true
+  - file: repository/ci/tasks/build-image.yml
+    privileged: true
+    task: build-image
+  - get_params:
+      format: oci
+    inputs:
+    - image
+    params:
+      image: image/image.tar
+    put: rc-image
+  public: true
+- max_in_flight: 2
+  name: concourse-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: kubernetes-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: kubernetes-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: kubernetes-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: sourcegraph-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: sourcegraph-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: sourcegraph-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: prometheus-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: prometheus-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: prometheus-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: publish-image
+  plan:
+  - get: rc-image
+    params:
+      format: oci
+    passed:
+    - kubernetes-deps
+    - prometheus-deps
+    - concourse-deps
+    - hugo-deps
+    - sourcegraph-deps
+    - gin-deps
+    - syncthing-deps
+    - etcd-deps
+    - frp-deps
+    - caddy-deps
+    - gitea-deps
+    - guardian-deps
+    - concourse-s3-resource-deps
+    - concourse-docker-image-resource-deps
+    - concourse-semver-resource-deps
+    - concourse-github-release-resource-deps
+    - concourse-cf-resource-deps
+    - concourse-concourse-pipeline-resource-deps
+    - concourse-pool-resource-deps
+    - concourse-time-resource-deps
+    - concourse-tracker-resource-deps
+    - concourse-registry-image-resource-deps
+    - concourse-bosh-io-stemcell-resource-deps
+    - concourse-datadog-event-resource-deps
+    - concourse-mock-resource-deps
+  - params:
+      image: rc-image/image.tar
+    put: final-image
+  public: true
+- max_in_flight: 2
+  name: hugo-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: hugo-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: hugo-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: gin-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: gin-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: gin-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: syncthing-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: syncthing-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: syncthing-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: etcd-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: etcd-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: etcd-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: frp-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: frp-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: frp-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: caddy-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: caddy-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: caddy-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: gitea-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: gitea-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: gitea-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: guardian-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: guardian-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    params:
+      DIR: ./src/guardian
+    input_mapping:
+      repo: guardian-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-s3-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-s3-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-s3-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-docker-image-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-docker-image-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-docker-image-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-semver-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-semver-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-semver-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-github-release-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-github-release-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-github-release-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-cf-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-cf-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-cf-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-concourse-pipeline-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-concourse-pipeline-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-concourse-pipeline-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-pool-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-pool-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-pool-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-time-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-time-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-time-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-tracker-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-tracker-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-tracker-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-registry-image-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-registry-image-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-registry-image-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-bosh-io-stemcell-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-bosh-io-stemcell-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-bosh-io-stemcell-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-datadog-event-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-datadog-event-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-datadog-event-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+- max_in_flight: 2
+  name: concourse-mock-resource-deps
+  plan:
+  - aggregate:
+    - get: repository
+      passed:
+      - build
+      trigger: true
+    - get: rc-image
+      passed:
+      - build
+      trigger: true
+    - get: concourse-mock-resource-repo
+      trigger: true
+  - file: repository/ci/tasks/gather-dependencies-list.yml
+    input_mapping:
+      repo: concourse-mock-resource-repo
+    task: gather-dependencies
+  - file: repository/ci/tasks/resolve-deps.yml
+    image: rc-image
+    task: run
+  public: true
+resources:
+- name: alpine
+  source:
+    repository: alpine
+  type: registry-image
+- name: caddy-repo
+  source:
+    uri: https://github.com/mholt/caddy
+  type: git
+- name: concourse-bosh-io-stemcell-resource-repo
+  source:
+    uri: https://github.com/concourse/bosh-io-stemcell-resource
+  type: git
+- name: concourse-cf-resource-repo
+  source:
+    uri: https://github.com/concourse/cf-resource
+  type: git
+- name: concourse-concourse-pipeline-resource-repo
+  source:
+    uri: https://github.com/concourse/concourse-pipeline-resource
+  type: git
+- name: concourse-datadog-event-resource-repo
+  source:
+    uri: https://github.com/concourse/datadog-event-resource
+  type: git
+- name: concourse-docker-image-resource-repo
+  source:
+    uri: https://github.com/concourse/docker-image-resource
+  type: git
+- name: concourse-github-release-resource-repo
+  source:
+    uri: https://github.com/concourse/github-release-resource
+  type: git
+- name: concourse-mock-resource-repo
+  source:
+    uri: https://github.com/concourse/mock-resource
+  type: git
+- name: concourse-pool-resource-repo
+  source:
+    uri: https://github.com/concourse/pool-resource
+  type: git
+- name: concourse-registry-image-resource-repo
+  source:
+    uri: https://github.com/concourse/registry-image-resource
+  type: git
+- name: concourse-repo
+  source:
+    uri: https://github.com/concourse/concourse
+  type: git
+- name: concourse-s3-resource-repo
+  source:
+    uri: https://github.com/concourse/s3-resource
+  type: git
+- name: concourse-semver-resource-repo
+  source:
+    uri: https://github.com/concourse/semver-resource
+  type: git
+- name: concourse-time-resource-repo
+  source:
+    uri: https://github.com/concourse/time-resource
+  type: git
+- name: concourse-tracker-resource-repo
+  source:
+    uri: https://github.com/concourse/tracker-resource
+  type: git
+- name: etcd-repo
+  source:
+    uri: https://github.com/etcd-io/etcd
+  type: git
+- name: final-image
+  source:
+    password: ((docker-password))
+    repository: cirocosta/go-mod-dep-source-finder
+    username: ((docker-user))
+  type: registry-image
+- name: frp-repo
+  source:
+    uri: https://github.com/fatedier/frp
+  type: git
+- name: gin-repo
+  source:
+    uri: https://github.com/gin-gonic/gin
+  type: git
+- name: gitea-repo
+  source:
+    uri: https://github.com/go-gitea/gitea
+  type: git
+- name: golang-alpine
+  source:
+    repository: golang
+    tag: alpine
+  type: registry-image
+- name: guardian-repo
+  source:
+    uri: https://github.com/cloudfoundry/garden-runc-release
+  type: git
+- name: hugo-repo
+  source:
+    uri: https://github.com/gohugoio/hugo
+  type: git
+- name: kubernetes-repo
+  source:
+    uri: https://github.com/kubernetes/kubernetes
+  type: git
+- name: prometheus-repo
+  source:
+    uri: https://github.com/prometheus/prometheus
+  type: git
+- name: rc-image
+  source:
+    password: ((docker-password))
+    repository: cirocosta/go-mod-dep-source-finder
+    tag: rc
+    username: ((docker-user))
+  type: registry-image
+- name: repository
+  source:
+    uri: https://((github-token))@github.com/cirocosta/go-mod-dep-source-finder
+  type: git
+- name: sourcegraph-repo
+  source:
+    uri: https://github.com/sourcegraph/sourcegraph
+  type: git
+- name: syncthing-repo
+  source:
+    uri: https://github.com/syncthing/syncthing
+  type: git
