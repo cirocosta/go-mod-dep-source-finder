@@ -16,7 +16,7 @@ outputs:
 - name: dependencies
 
 run: 
-  path: /bin/sh
+  path: /bin/bash
   args:
     - -ce
     - |
