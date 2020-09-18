@@ -19,8 +19,8 @@ FROM base AS builder
 			-tags netgo -v -a \
 			-ldflags "-X main.version=$(cat ./VERSION) -extldflags \"-static\"" && \
 		mv \
-			./go-mod-license-finder \
-			/usr/bin/go-mod-license-finder
+			./go-mod-dep-source-finder \
+			/usr/bin/go-mod-dep-source-finder
 
 
 FROM base AS tests
@@ -33,6 +33,5 @@ FROM alpine
 
 	COPY \
 		--from=builder \
-		/usr/bin/go-mod-license-finder \
-		/usr/bin/go-mod-license-finder
-
+		/usr/bin/go-mod-dep-source-finder \
+		/usr/bin/go-mod-dep-source-finder

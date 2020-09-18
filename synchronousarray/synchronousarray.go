@@ -3,7 +3,7 @@ package synchronous_array
 import (
 	"sync"
 
-	"github.com/cirocosta/go-mod-license-finder/result"
+	"github.com/cirocosta/go-mod-dep-source-finder/result"
 )
 
 type SynchronousArray struct {

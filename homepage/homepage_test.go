@@ -1,7 +1,7 @@
 package homepage_test
 
 import (
-	"github.com/cirocosta/go-mod-license-finder/homepage"
+	"github.com/cirocosta/go-mod-dep-source-finder/homepage"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"

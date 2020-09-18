@@ -3,7 +3,7 @@ platform: linux
 
 image_resource:
   type: registry-image
-  source: {repository: cirocosta/go-mod-license-finder}
+  source: {repository: cirocosta/go-mod-dep-source-finder}
 
 inputs:
 - name: dependencies
@@ -15,4 +15,4 @@ run:
     - -ce
     - |
       apk add -qq --update ca-certificates jq
-      cat ./dependencies.txt | tail -n +2 | go-mod-license-finder - | jq
+      cat ./dependencies.txt | tail -n +2 | go-mod-dep-source-finder - | jq

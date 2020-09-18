@@ -1,4 +1,4 @@
-module github.com/cirocosta/go-mod-license-finder
+module github.com/cirocosta/go-mod-dep-source-finder
 
 go 1.12
 

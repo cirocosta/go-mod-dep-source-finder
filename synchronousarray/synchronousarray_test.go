@@ -4,8 +4,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	. "github.com/cirocosta/go-mod-license-finder/result"
-	. "github.com/cirocosta/go-mod-license-finder/synchronousarray"
+	. "github.com/cirocosta/go-mod-dep-source-finder/result"
+	. "github.com/cirocosta/go-mod-dep-source-finder/synchronousarray"
 )
 
 var _ = Describe("SynchronousArray", func() {

@@ -1,4 +1,4 @@
-# go-mod-dep-source-finder [![](https://hush-house.pivotal.io/api/v1/teams/main/pipelines/go-mod-license-finder/badge)](https://hush-house.pivotal.io/teams/main/pipelines/go-mod-license-finder)
+# go-mod-dep-source-finder [![](https://hush-house.pivotal.io/api/v1/teams/main/pipelines/go-mod-dep-source-finder/badge)](https://hush-house.pivotal.io/teams/main/pipelines/go-mod-dep-source-finder)
 
 Given dependencies from `go list`, retrieves the URL of each dependency matching the versions.
 
@@ -16,7 +16,7 @@ go-mod-dep-source-finder 'golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
 
 # Get the URL of all of your dependencies
 #
-go list -m all | tail -n +2 | go-mod-license-finder -
+go list -m all | tail -n +2 | go-mod-dep-source-finder -
 ...
 ```
 

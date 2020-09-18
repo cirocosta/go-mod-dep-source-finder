@@ -10,11 +10,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/cirocosta/go-mod-license-finder/homepage"
-	"github.com/cirocosta/go-mod-license-finder/parser"
-	"github.com/cirocosta/go-mod-license-finder/resolver"
-	"github.com/cirocosta/go-mod-license-finder/result"
-	sa "github.com/cirocosta/go-mod-license-finder/synchronousarray"
+	"github.com/cirocosta/go-mod-dep-source-finder/homepage"
+	"github.com/cirocosta/go-mod-dep-source-finder/parser"
+	"github.com/cirocosta/go-mod-dep-source-finder/resolver"
+	"github.com/cirocosta/go-mod-dep-source-finder/result"
+	sa "github.com/cirocosta/go-mod-dep-source-finder/synchronousarray"
 	"golang.org/x/sync/errgroup"
 )
 

@@ -5,7 +5,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/cirocosta/go-mod-license-finder/resolver"
+	"github.com/cirocosta/go-mod-dep-source-finder/resolver"
 	"github.com/onsi/gomega/ghttp"
 
 	. "github.com/onsi/ginkgo"

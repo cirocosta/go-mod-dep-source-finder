@@ -6,7 +6,7 @@ image_resource:
   source: {repository: vito/oci-build-task}
 
 params:
-  REPOSITORY: cirocosta/go-mod-license-finder
+  REPOSITORY: cirocosta/go-mod-dep-source-finder
   TAG: latest
   CONTEXT: repository
 

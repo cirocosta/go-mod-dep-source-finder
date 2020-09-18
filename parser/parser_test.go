@@ -1,7 +1,7 @@
 package parser_test
 
 import (
-	"github.com/cirocosta/go-mod-license-finder/parser"
+	"github.com/cirocosta/go-mod-dep-source-finder/parser"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"

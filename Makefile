@@ -1,6 +1,6 @@
 VERSION = $(shell cat ./VERSION)
-NAME = go-mod-license-finder
-PIPELINE_NAME = go-mod-license-finder
+NAME = go-mod-dep-source-finder
+PIPELINE_NAME = go-mod-dep-source-finder
 
 
 all: install
@@ -16,7 +16,11 @@ fmt:
 
 image:
 	docker build -t cirocosta/$(NAME):$(VERSION) .
-	docker tag cirocosta/$(NAME):$(VERSION) ciroocsta/$(NAME):latest
+	docker tag cirocosta/$(NAME):$(VERSION) cirocosta/$(NAME):latest
+
+push-image:
+	docker push cirocosta/$(NAME):$(VERSION)
+	docker push cirocosta/$(NAME):latest
 
 pipeline:
 	jsonnet \
