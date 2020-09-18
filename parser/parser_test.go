@@ -81,6 +81,10 @@ var _ = Describe("ParseLine", func() {
 			line:       "aaa v1.2.3",
 			parsedLine: parser.Line{"aaa", "v1.2.3"},
 		}),
+		Entry("having a replace directive", testCase{
+			line:       "aaa v1.2.3 => bbb v1.22.33",
+			parsedLine: parser.Line{"bbb", "v1.22.33"},
+		}),
 		Entry("having leading spaces", testCase{
 			line:       "   aaa v1.2.3",
 			parsedLine: parser.Line{"aaa", "v1.2.3"},

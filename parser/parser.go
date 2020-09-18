@@ -158,8 +158,12 @@ func SanitizeDependency(content string) string {
 //        dependency name (where to ask for go source code)
 //
 //
+// In case of a replace directive being used, only the target is taken into
+// considration.
+//
 //
 func ParseLine(content string) (line Line, err error) {
+	content = sanitizeReplaceDirective(content)
 	fields := strings.Fields(content)
 
 	if len(fields) < 2 {
@@ -189,4 +193,14 @@ func ParseLine(content string) (line Line, err error) {
 	line.Dependency = SanitizeDependency(dependency)
 
 	return
+}
+
+func sanitizeReplaceDirective(content string) string {
+	const separator = "=>"
+
+	if !strings.Contains(content, separator) {
+		return content
+	}
+
+	return strings.Split(content, separator)[1]
 }
