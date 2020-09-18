@@ -45,6 +45,7 @@ Container images are continuously shipped to DockerHub:
 ```sh
 docker run \
   cirocosta/go-mod-dep-source-finder \
+  go-mod-dep-source-finder \
   'golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2'
 ```
 
