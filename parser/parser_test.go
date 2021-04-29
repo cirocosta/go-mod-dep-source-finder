@@ -79,35 +79,43 @@ var _ = Describe("ParseLine", func() {
 		}),
 		Entry("having a proper semver after the dependency", testCase{
 			line:       "aaa v1.2.3",
-			parsedLine: parser.Line{"aaa", "v1.2.3"},
+			parsedLine: parser.Line{"aaa", "v1.2.3", ""},
 		}),
 		Entry("having a replace directive", testCase{
 			line:       "aaa v1.2.3 => bbb v1.22.33",
-			parsedLine: parser.Line{"bbb", "v1.22.33"},
+			parsedLine: parser.Line{"bbb", "v1.22.33", ""},
+		}),
+		Entry("having a replace to existing relative directory", testCase{
+			line:       "github.com/xoebus/go-tracker v0.0.0-00010101000000-000000000000 => ./testdata/",
+			parsedLine: parser.Line{"", "", "./testdata/"},
+		}),
+		Entry("having a replace to inexistent relative directory", testCase{
+			line:        "github.com/xoebus/go-tracker v0.0.0-00010101000000-000000000000 => ./inexistent/",
+			shouldError: true,
 		}),
 		Entry("having leading spaces", testCase{
 			line:       "   aaa v1.2.3",
-			parsedLine: parser.Line{"aaa", "v1.2.3"},
+			parsedLine: parser.Line{"aaa", "v1.2.3", ""},
 		}),
 		Entry("having version suffix", testCase{
 			line:       "   aaa/v3 v3.2.3",
-			parsedLine: parser.Line{"aaa", "v3.2.3"},
+			parsedLine: parser.Line{"aaa", "v3.2.3", ""},
 		}),
 		Entry("being an incompatible version", testCase{
 			line:       "code.cloudfoundry.org/lager v2.0.0+incompatible",
-			parsedLine: parser.Line{"code.cloudfoundry.org/lager", "v2.0.0"},
+			parsedLine: parser.Line{"code.cloudfoundry.org/lager", "v2.0.0", ""},
 		}),
 		Entry("being a directory within a github repo", testCase{
 			line:       "github.com/ugorji/go/codec v0.0.0-20181209151446-772ced7fd4c2 // indirect",
-			parsedLine: parser.Line{"github.com/ugorji/go", "772ced7fd4c2"},
+			parsedLine: parser.Line{"github.com/ugorji/go", "772ced7fd4c2", ""},
 		}),
 		Entry("having trailing fields", testCase{
 			line:       "   aaa v1.2.3 // indirect",
-			parsedLine: parser.Line{"aaa", "v1.2.3"},
+			parsedLine: parser.Line{"aaa", "v1.2.3", ""},
 		}),
 		Entry("having a pseudo-version", testCase{
 			line:       "   aaa v0.0.0-20180518195852-02e53af36e6c // indirect",
-			parsedLine: parser.Line{"aaa", "02e53af36e6c"},
+			parsedLine: parser.Line{"aaa", "02e53af36e6c", ""},
 		}),
 	)
 })

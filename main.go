@@ -37,6 +37,10 @@ func execute(ctx context.Context, text string, syncArray *sa.SynchronousArray) e
 		return err
 	}
 
+	if line.RelativeDirectoryDependency != "" {
+		return nil
+	}
+
 	location, err := resolver.Resolve(
 		context.Background(),
 		"https://"+line.Dependency,

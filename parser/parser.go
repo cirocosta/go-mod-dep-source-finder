@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"os"
 	"strings"
 
 	"github.com/hashicorp/go-version"
@@ -12,8 +13,9 @@ import (
 // unwanted content.
 //
 type Line struct {
-	Dependency string
-	Reference  string
+	Dependency                  string
+	Reference                   string
+	RelativeDirectoryDependency string
 }
 
 // ParseVersion retrieves a reference out of a version.
@@ -166,8 +168,19 @@ func ParseLine(content string) (line Line, err error) {
 	content = sanitizeReplaceDirective(content)
 	fields := strings.Fields(content)
 
-	if len(fields) < 2 {
+	if len(fields) == 0 {
 		err = errors.Errorf("not enough fields in line '%s'", content)
+		return
+	}
+
+	if len(fields) == 1 {
+		_, err = os.Stat(fields[0])
+		if os.IsNotExist(err) {
+			err = errors.Wrapf(err, "stat '%s'", fields[0])
+			return
+		}
+
+		line.RelativeDirectoryDependency = fields[0]
 		return
 	}
 
